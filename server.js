@@ -55,12 +55,12 @@ const storage = Storage({
 const bucketName = 'js-shop-images';
 var myBucket = storage.bucket(bucketName);
 
-var file = myBucket.file('my-file');
 
 
-file.exists(function(err, exists) {});
+
 
 const existsFile = async(fileName, callback)=>{
+    var file = myBucket.file(fileName);
     try{
         let result = await file.exists(callback);
         return result;
@@ -69,7 +69,7 @@ const existsFile = async(fileName, callback)=>{
     }
 }
 // FileExistsCallback(err, exists)
-existsFile('we', function(err, exists) {
+existsFile('1.png', function(err, exists) {
     if (err) console.log(err);
     console.log(exists);
 } );
