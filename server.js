@@ -4,8 +4,8 @@
 // https://console.cloud.google.com/storage/browser/js-shop-images?project=js-shop  -   LIST OF FILES
 // https://github.com/googleapis/nodejs-storage/blob/master/samples/files.js        -   NODE-JS
 // https://cloud.google.com/storage/docs/json_api/v1/buckets/get                    -   COOL
-
-
+const fs = require('fs');
+const removeLeadingSlash = require('remove-leading-slash');
 // Imports the Google Cloud client library.
 const Storage = require('@google-cloud/storage');
 // Your Google Cloud Platform project ID
@@ -68,11 +68,55 @@ const existsFile = async(fileName, callback)=>{
         console.log(er);
     }
 }
-// FileExistsCallback(err, exists)
-existsFile('1.png', function(err, exists) {
-    if (err) console.log(err);
-    console.log(exists);
-} );
+
+// existsFile('1.png', function(err, exists) {
+//     if (err) console.log(err);
+//     console.log(exists);
+// } );
+
+
+
+function downloadFile(bucketName, srcFilename, destFilename) {
+    const options = {
+        // The path to which the file should be downloaded, e.g. "./file.txt"
+        destination: destFilename,
+    };
+
+    // Downloads the file
+    storage
+        .bucket(bucketName)
+        .file(srcFilename)
+        .download(options)
+        .then(() => {
+            console.log(
+                // `gs://${bucketName}/${srcFilename} downloaded to ${destFilename}.`
+            );
+        })
+        .catch(err => {
+            console.error('ERROR:', err);
+        });
+    // [END storage_download_file]
+}
+// downloadFile(bucketName, fileImg, '3333');
+
+
+var fileImg = fs.readFileSync('./4.png');
+
+function uploadFile(bucketName, filename) {
+
+    // Uploads a local file to the bucket
+    storage
+        .bucket(bucketName)
+        .upload(filename)
+        .then(() => {
+            console.log(`${filename} uploaded to ${bucketName}.`);
+        })
+        .catch(err => {
+            console.error('ERROR:', err);
+        });
+}
+uploadFile(bucketName, fileImg.toString() );
+
 
 // file.exists().then(function(data) {
 //     var exists = data[0];
