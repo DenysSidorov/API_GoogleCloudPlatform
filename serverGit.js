@@ -9,6 +9,29 @@ const storage = Storage({
 })
 const bucket = storage.bucket(CLOUD_BUCKET);
 
+/**
+ * Created by Denis on 15.09.2017.
+ */
+var jwt  = require('jsonwebtoken');
+var express =require( 'express');
+
+
+var app = express(); // Запуск приложения
+
+app.listen(3030, function(err){
+    if (err) throw err;
+console.log('Server listening on port ' + 3030 );
+
+
+    app.get('/', function(req, resp){
+        resp.json({h:5});
+    })
+
+    app.get('/user/upload', uploadUser )
+});
+
+
+
 const uploadUser = (req, res) => {
     const {file} = req.files;
     const gcsname = uuidv4() + file.name;
@@ -30,5 +53,3 @@ const uploadUser = (req, res) => {
             })
         });
 };
-
-export default uploadUser;
