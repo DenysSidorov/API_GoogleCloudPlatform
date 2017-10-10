@@ -3,9 +3,12 @@ const restify = require("restify");
 const uuidv4 = require("uuid/v4");
 const Storage = require("@google-cloud/storage");
 
-const fileUpload = require('express-fileupload');
+    // const fileUpload = require('express-fileupload');
+
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
+
+// var bb = require('express-busboy');
 
 const CLOUD_BUCKET = 'js-shop-images';
 const projectId = '461143987983';
@@ -22,11 +25,16 @@ const bucket = storage.bucket(CLOUD_BUCKET);
  */
 var jwt  = require('jsonwebtoken');
 var express =require( 'express');
-
-
+// var multer  = require('multer')  //-----
+// var upload = multer({ dest: '/' }) //-----
 var app = express(); // Запуск приложения
 // default options
-app.use(fileUpload());
+
+
+// bb.extend(app, {    upload: true,
+//     path: '/',
+//     allowedPath: '/'});
+
 app.listen(3030, function(err){
     if (err) throw err;
 console.log('Server listening on port ' + 3030 );
@@ -36,15 +44,16 @@ console.log('Server listening on port ' + 3030 );
         resp.json({h:5});
     })
 
-    app.post('/user/upload', uploadUser )
+    app.post('/user/upload', multipartMiddleware, uploadUser )
 });
 
 
 
 const uploadUser = (req, res) => {
-    const file = req.files.file;
+    console.log(req.files, 'files');
+    const file = req.files.fileName;
     console.log(file);
-    const gcsname = uuidv4() + file.name;
+    const gcsname = uuidv4() ;//+ file.name;
     const files = bucket.file(gcsname);
 console.log(file.path, 'file.path');
     fs.createReadStream(file.path)
@@ -54,7 +63,7 @@ console.log(file.path, 'file.path');
             }
         }))
         .on("error", (err) => {
-            restify.InternalServerError(err);
+            console.log(err);
         })
         .on('finish', () => {
             res.json({
